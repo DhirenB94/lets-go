@@ -17,6 +17,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	files := []string{
         "./ui/html/home.page.tmpl",
         "./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
     }
 	//read the template file into the template set
 	ts, err := template.ParseFiles(files...)
@@ -32,7 +33,6 @@ func home(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "unable to execute template", 500)
 		return
 	}
-	w.Write([]byte("Hello from snippetbox"))
 }
 
 func showSnippet(w http.ResponseWriter, r *http.Request) {
