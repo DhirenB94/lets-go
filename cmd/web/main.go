@@ -35,10 +35,17 @@ func main() {
 	//register the file server as the handler
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
+	//intialise a new Http server and set the address, handler and errorLog fields so that these are used instead of Go's default HTTP server settings
+	srv := http.Server{
+		Addr: *addr,
+		Handler: mux,
+		ErrorLog: errLog,
+	}
+
 	infoLog.Printf("Starting Server on %s", *addr)
 
-	//start a new web server
-	err := http.ListenAndServe(*addr, mux)
+	//call the listen and serve method on our new htpp server
+	err := srv.ListenAndServe()
 	if err != nil {
 		errLog.Fatal(err)
 	}
