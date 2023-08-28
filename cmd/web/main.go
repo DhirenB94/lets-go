@@ -29,17 +29,8 @@ func main() {
 		errorLog: errLog,
 	}
 
-	//Initalise a new router/servemux
-	mux := http.NewServeMux()
-
 	//Routes
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet", app.showSnippet)
-	mux.HandleFunc("/snippet/create", app.createSnippet)
-
-	//File Server & register it as a handler
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+	mux := app.routes()
 
 	//Intialise a new Http server and set the address, handler and errorLog fields so that these are used instead of Go's default HTTP server settings
 	srv := http.Server{
