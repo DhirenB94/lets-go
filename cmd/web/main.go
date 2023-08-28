@@ -7,6 +7,12 @@ import (
 	"os"
 )
 
+//Define struct to hold application-wide dependencies 
+type application struct {
+	infoLog *log.Logger
+	errorLog *log.Logger
+}
+
 func main() {
 
 	//add a command line flag for the network address
@@ -20,12 +26,19 @@ func main() {
 	//log.Lshortfile flag will include the file name and the line number
 	errLog:= log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	//Initialise a new instance of application contiainig the dependencies
+	app := &application{
+		infoLog:  infoLog,
+		errorLog: errLog,
+	}
+
 	//initalise a new router/servemux which will map a url to a handler
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet", showSnippet)
-	mux.HandleFunc("/snippet/create", createSnippet)
+	//swap the rouitng declerations as handlers are now mehtods on application
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet", app.showSnippet)
+	mux.HandleFunc("/snippet/create", app.createSnippet)
 
 	// Create a file server which serves files out of the "./ui/static" directory
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
