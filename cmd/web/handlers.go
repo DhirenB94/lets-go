@@ -8,7 +8,7 @@ import (
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
@@ -20,15 +20,13 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	//read the template file into the template set
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "unable to parse", http.StatusInternalServerError)
+		app.severError(w, err)
 		return
 	}
 	//execute  to write the template content as the response body
 	err = ts.Execute(w, nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-        http.Error(w, "unable to execute template", 500)
+		app.severError(w, err)
 		return
 	}
 }
@@ -36,12 +34,12 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	idFromUrl := r.URL.Query().Get("id")
 	if idFromUrl == "" {
-		http.Error(w, "no id entered", http.StatusBadRequest)
+		app.notFound(w)
 		return
 	}
 	id, err := strconv.Atoi(idFromUrl)
 	if err != nil || id < 1 {
-		http.Error(w, "invalid id", http.StatusNotFound)
+		app.notFound(w)
 		return
 	}
 
@@ -51,8 +49,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	app.infoLog.Println("Create a new snippet...")
+	w.Write([]byte("Create a new snippet..."))
 }
