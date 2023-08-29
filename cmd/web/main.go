@@ -29,8 +29,6 @@ func main() {
 	errLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	//Initialise a connection pool to the database
-	//The sql.Open doesnt actually create a connection, just initiialises a pool for future use
-	//so db.Ping method is used to create a connection and check for any errors
 	db, err := sql.Open("mysql", *dsn)
 	if err != nil {
 		errLog.Fatal(err)
