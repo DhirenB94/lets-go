@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"html/template"
+	//"html/template"
 	"net/http"
 	"strconv"
 
@@ -14,24 +14,33 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
+	snippets, err := app.snippetsDb.Latest()
+	if err != nil {
+		app.severError(w, err)
+		return
+	}
 
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
+	for _, s := range snippets {
+		fmt.Fprint(w, s)
 	}
-	//read the template file into the template set
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.severError(w, err)
-		return
-	}
-	//execute  to write the template content as the response body
-	err = ts.Execute(w, nil)
-	if err != nil {
-		app.severError(w, err)
-		return
-	}
+
+	// files := []string{
+	// 	"./ui/html/home.page.tmpl",
+	// 	"./ui/html/base.layout.tmpl",
+	// 	"./ui/html/footer.partial.tmpl",
+	// }
+	// //read the template file into the template set
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.severError(w, err)
+	// 	return
+	// }
+	// //execute  to write the template content as the response body
+	// err = ts.Execute(w, nil)
+	// if err != nil {
+	// 	app.severError(w, err)
+	// 	return
+	// }
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -48,9 +57,11 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	snippet, err := app.snippetsDb.Get(id)
 	if err == models.ErrNoRecord {
 		app.notFound(w)
+		return
 	}
 	if err != nil {
 		app.severError(w, err)
+		return
 	}
 
 	fmt.Fprint(w, snippet)
@@ -70,6 +81,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := app.snippetsDb.Insert(title, content, expires)
 	if err != nil {
 		app.severError(w, err)
+		return
 	}
 	//Redirect to show the relevant page
 	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
