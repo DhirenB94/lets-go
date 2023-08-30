@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -43,7 +44,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.infoLog.Printf("Display a specific snippet with ID %d...", id)
+	app.infoLog.Printf("Displaying a specific snippet with ID %d...", id)
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
@@ -52,5 +53,15 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
+	title := "blah"
+	content := "blah, blah, blah"
+	expires := "7"
+	id, err := app.snippetsDb.Insert(title, content, expires)
+	if err != nil {
+		app.severError(w, err)
+	}
+	//Redirect to show the relevant page
+	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	
 	w.Write([]byte("Create a new snippet..."))
 }
