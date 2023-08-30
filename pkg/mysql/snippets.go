@@ -26,7 +26,24 @@ func (sm *SnippetModel) Insert(title, content, expires string) (int, error) {
 }
 
 func (sm *SnippetModel) Get(id int) (*models.Snippet, error) {
-	return nil, nil
+	query := `SELECT id, title, content, created, expired FROM snippets
+	WHERE expires > UTC_TIMESTAMP AND id = ?`
+
+	//this will return a pointer to a sql.Row database object
+	row := sm.DB.QueryRow(query, id)
+
+	//Initialise a new models.Snippet
+	s := &models.Snippet{}
+
+	//copy the values from each field in the sql.Row object into the corresponding fields in the Snippet Struct.
+	err := row.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s, s.Expires)
+	if err == sql.ErrNoRows {
+		return nil, models.ErrNoRecord
+	} else if err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
 func (sm *SnippetModel) Latest() ([]*models.Snippet, error) {
