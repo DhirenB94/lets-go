@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"text/template"
+
 	//"html/template"
 	"net/http"
 	"strconv"
@@ -63,6 +65,19 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.severError(w, err)
 		return
 	}
+
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+	//read the template file into the template set
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.severError(w, err)
+		return
+	}
+	err = ts.Execute(w, snippet)
 
 	fmt.Fprint(w, snippet)
 
