@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+
+	models "dhiren.brahmbhatt/snippetbox/pkg"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -14,10 +16,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	files := []string{
-        "./ui/html/home.page.tmpl",
-        "./ui/html/base.layout.tmpl",
+		"./ui/html/home.page.tmpl",
+		"./ui/html/base.layout.tmpl",
 		"./ui/html/footer.partial.tmpl",
-    }
+	}
 	//read the template file into the template set
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
@@ -43,6 +45,15 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
+	snippet, err := app.snippetsDb.Get(id)
+	if err == models.ErrNoRecord {
+		app.notFound(w)
+	}
+	if err != nil {
+		app.severError(w, err)
+	}
+
+	fmt.Fprint(w, snippet)
 
 	app.infoLog.Printf("Displaying a specific snippet with ID %d...", id)
 }
@@ -62,6 +73,6 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 	//Redirect to show the relevant page
 	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
-	
+
 	w.Write([]byte("Create a new snippet..."))
 }
