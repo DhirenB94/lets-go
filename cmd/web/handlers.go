@@ -22,27 +22,24 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, s := range snippets {
-		fmt.Fprint(w, s)
-	}
 
-	// files := []string{
-	// 	"./ui/html/home.page.tmpl",
-	// 	"./ui/html/base.layout.tmpl",
-	// 	"./ui/html/footer.partial.tmpl",
-	// }
-	// //read the template file into the template set
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.severError(w, err)
-	// 	return
-	// }
-	// //execute  to write the template content as the response body
-	// err = ts.Execute(w, nil)
-	// if err != nil {
-	// 	app.severError(w, err)
-	// 	return
-	// }
+	files := []string{
+		"./ui/html/home.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+	//read the template file into the template set
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.severError(w, err)
+		return
+	}
+	//execute  to write the template content as the response body
+	err = ts.Execute(w, &templateData{Snippets: snippets})
+	if err != nil {
+		app.severError(w, err)
+		return
+	}
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
