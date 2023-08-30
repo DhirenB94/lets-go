@@ -77,7 +77,10 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.severError(w, err)
 		return
 	}
-	err = ts.Execute(w, snippet)
+	err = ts.Execute(w, &templateData{Snippet: snippet})
+	if err != nil {
+		app.severError(w, err)
+	}
 
 	fmt.Fprint(w, snippet)
 
