@@ -16,15 +16,9 @@ type templateData struct {
 func newTemplateCache (dir string) (map[string]*template.Template, error) {
 	//Initialise a new map to act as the cache
 	cache := map[string]*template.Template{}
-
-	glob, _ := filepath.Glob("*page.tmpl")
-	fmt.Println("GLOB: ", glob)
-	join := filepath.Join(dir, "*.page.tmpl")
-	fmt.Println("JOIN: ", join)
-
+	
 	//get a slice of all the files with the page.tmpl extenstion
 	pages, err := filepath.Glob(filepath.Join(dir, "*.page.tmpl"))
-	fmt.Println("PAGES", pages)
 	if err != nil {
 		return nil, err
 	}
