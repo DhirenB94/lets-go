@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"path/filepath"
 
@@ -9,14 +8,13 @@ import (
 )
 
 type templateData struct {
-	Snippet *models.Snippet
+	Snippet  *models.Snippet
 	Snippets []*models.Snippet
 }
-
-func newTemplateCache (dir string) (map[string]*template.Template, error) {
+func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	//Initialise a new map to act as the cache
 	cache := map[string]*template.Template{}
-	
+
 	//get a slice of all the files with the page.tmpl extenstion
 	pages, err := filepath.Glob(filepath.Join(dir, "*.page.tmpl"))
 	if err != nil {
@@ -36,11 +34,11 @@ func newTemplateCache (dir string) (map[string]*template.Template, error) {
 		//add layout and partial templates to the template set
 		ts, err = ts.ParseGlob(filepath.Join(dir, "*.layout.tmpl"))
 		if err != nil {
-            return nil, err
+			return nil, err
 		}
 		ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.tmpl"))
 		if err != nil {
-            return nil, err
+			return nil, err
 		}
 
 		//add the template set to the cache

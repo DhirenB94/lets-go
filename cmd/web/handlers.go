@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"text/template"
 
 	//"html/template"
 	"net/http"
@@ -22,24 +21,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-	//read the template file into the template set
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.severError(w, err)
-		return
-	}
-	//execute  to write the template content as the response body
-	err = ts.Execute(w, &templateData{Snippets: snippets})
-	if err != nil {
-		app.severError(w, err)
-		return
-	}
+	app.render(w, r, "home.page.tmpl", &templateData{Snippets: snippets})
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -63,21 +45,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-	//read the template file into the template set
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.severError(w, err)
-		return
-	}
-	err = ts.Execute(w, &templateData{Snippet: snippet})
-	if err != nil {
-		app.severError(w, err)
-	}
+	app.render(w, r, "show.page.tmpl", &templateData{Snippet: snippet})
 
 	fmt.Fprint(w, snippet)
 
