@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 // serverError writes an error to the stack trace to the customLogger, then sends a generic 500 internal server error to the user
@@ -24,6 +25,15 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 
+//addDefaultYear
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData  {
+	if td == nil {
+        td = &templateData{}
+    }
+	td.CurrentYear = time.Now().Year()
+	return td
+}
+
 //render looks up the template set in the cache
 func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
 	//Retrieve the appropriate template set based on the name of the page
@@ -35,13 +45,16 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
     //Initialise a new buffer
     buf := new(bytes.Buffer)
 
-	//Write the template set into the buffer instead
+	//add the default data
+	app.addDefaultData(td, r)
+
+	//execute the template set with the current year injected
 	err := ts.Execute(buf, td)
 	if err != nil {
 		app.severError(w, err)
 		return
 	}
-	
+
 	//Write the contents of the buffer into the resposnse writer
 	buf.WriteTo(w)
 }
