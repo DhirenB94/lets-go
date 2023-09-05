@@ -17,7 +17,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 	snippets, err := app.snippetsDb.Latest()
 	if err != nil {
-		app.severError(w, err)
+		app.serverError(w, err)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		app.severError(w, err)
+		app.serverError(w, err)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	expires := "7"
 	id, err := app.snippetsDb.Insert(title, content, expires)
 	if err != nil {
-		app.severError(w, err)
+		app.serverError(w, err)
 		return
 	}
 	//Redirect to show the relevant page
