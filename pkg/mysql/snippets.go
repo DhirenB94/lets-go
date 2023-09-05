@@ -59,7 +59,7 @@ func (sm *SnippetModel) Latest() ([]*models.Snippet, error) {
 	defer rows.Close()
 
 	snippets := []*models.Snippet{}
-	
+
 	for rows.Next() {
 		s := &models.Snippet{}
 		err := rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
@@ -70,7 +70,7 @@ func (sm *SnippetModel) Latest() ([]*models.Snippet, error) {
 	}
 	//check for any errors during the iteration
 	if err = rows.Err(); err != nil {
-        return nil, err
-}
+		return nil, err
+	}
 	return snippets, nil
 }

@@ -14,9 +14,9 @@ import (
 
 // Define struct to hold application-wide dependencies
 type application struct {
-	infoLog  *log.Logger
-	errorLog *log.Logger
-	snippetsDb *mysql.SnippetModel
+	infoLog       *log.Logger
+	errorLog      *log.Logger
+	snippetsDb    *mysql.SnippetModel
 	templateCache map[string]*template.Template
 }
 
@@ -50,9 +50,9 @@ func main() {
 
 	//Initialise a new instance of application contiaining the dependencies
 	app := &application{
-		infoLog:  infoLog,
-		errorLog: errLog,
-		snippetsDb: &mysql.SnippetModel{DB: db},
+		infoLog:       infoLog,
+		errorLog:      errLog,
+		snippetsDb:    &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
 	}
 

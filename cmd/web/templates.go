@@ -10,19 +10,19 @@ import (
 
 type templateData struct {
 	CurrentYear int
-	Snippet  *models.Snippet
-	Snippets []*models.Snippet
+	Snippet     *models.Snippet
+	Snippets    []*models.Snippet
 }
 
 // humanDate returns a formatted easily readable string of the date
 func humanDate(t time.Time) string {
-    return t.Format("02 Jan 2006 at 15:04")
+	return t.Format("02 Jan 2006 at 15:04")
 }
 
-// Initialise a template.FuncMap object and store it in a global variable. 
+// Initialise a template.FuncMap object and store it in a global variable.
 // This is a string-keyed map which acts as a lookup between the names of of custom template functions and the functions themselves.
 var functions = template.FuncMap{
-	"humanDate" : humanDate, 
+	"humanDate": humanDate,
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
@@ -39,9 +39,9 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		//extract the file name (e.g home.page.tmpl) from the full path
 		name := filepath.Base(page)
 
-        // The template.FuncMap must be registered with the template set before we call the ParseFiles() method. 
+		// The template.FuncMap must be registered with the template set before we call the ParseFiles() method.
 		// This means we have to use template.New to  create an empty template set,
-		// Then use the Funcs() method to register the template.FuncMap, 
+		// Then use the Funcs() method to register the template.FuncMap,
 		// Then parse the file as normal.
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {

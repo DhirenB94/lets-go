@@ -22,10 +22,10 @@ func (app *application) logRequest(nextHandler http.Handler) http.Handler {
 	})
 }
 
-func (app *application) recoverPanic (nextHandler http.Handler) http.Handler {
+func (app *application) recoverPanic(nextHandler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//create a deffered function which will always be run in the event of a panic
-		defer func()  {
+		defer func() {
 			//use built in recover function to check if there has been a panic or not
 			if err := recover(); err != nil {
 				//Set a Connection close header on the response
