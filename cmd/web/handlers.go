@@ -46,7 +46,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.render(w, r, "show.page.tmpl", &templateData{Snippet: snippet})
-	
+
 	app.infoLog.Printf("Displaying a specific snippet with ID %d...", id)
 }
 
