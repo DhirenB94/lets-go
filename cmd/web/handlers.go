@@ -47,9 +47,18 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	title := "blah"
-	content := "blah, blah, blah"
-	expires := "7"
+	// r.ParseForm() which adds any data in POST/PUT/PATCH request bodies to the r.PostForm map. 
+	err := r.ParseForm()
+	if err != nil {
+        app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	// Use the r.PostForm.Get() method to retrieve the relevant data fields from the r.PostForm map
+	title :=  r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires := r.PostForm.Get("expires")
+
 	id, err := app.snippetsDb.Insert(title, content, expires)
 	if err != nil {
 		app.serverError(w, err)
@@ -57,8 +66,6 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 	//Redirect to show the relevant page
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
-
-	w.Write([]byte("Create a new snippet..."))
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
