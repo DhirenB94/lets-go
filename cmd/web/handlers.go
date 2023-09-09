@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strings"
+	"unicode/utf8"
 
 	//"html/template"
 	"net/http"
@@ -54,10 +56,34 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Initialise a map to hold any validation errors
+	validationErrors := make(map[string]string)
+
 	// Use the r.PostForm.Get() method to retrieve the relevant data fields from the r.PostForm map
 	title :=  r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	expires := r.PostForm.Get("expires")
+
+	//perform some basic validation, if validation fails add it to the validationErrors map
+	if strings.TrimSpace(title) == "" {
+		validationErrors["title"] = "This field cannot be blank"
+	} else if utf8.RuneCountInString(title) > 100 {
+        validationErrors["title"] = "This field is too long (maximum is 100 characters)"
+    }
+	if strings.TrimSpace(content) == "" {
+		validationErrors["content"] = "This field cannot be blank"
+	}
+	if strings.TrimSpace(expires) == "" {
+        validationErrors["expires"] = "This field cannot be blank"
+    } else if expires != "365" && expires != "7" && expires != "1" {
+        validationErrors["expires"] = "This field is invalid"
+    }
+
+	// If there are any errors, dump them in a plain text HTTP response and return.
+    if len(validationErrors) > 0 {
+        fmt.Fprint(w, validationErrors)
+		return
+	}
 
 	id, err := app.snippetsDb.Insert(title, content, expires)
 	if err != nil {
