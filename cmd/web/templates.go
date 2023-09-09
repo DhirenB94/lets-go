@@ -9,11 +9,11 @@ import (
 	models "dhiren.brahmbhatt/snippetbox/pkg"
 )
 
-//FormData will hold any previously submitted data, FormErrors will hold  the validation errors
+// FormData will hold any previously submitted data, FormErrors will hold  the validation errors
 type templateData struct {
 	CurrentYear int
-	FormData url.Values
-	FormErrors map[string]string
+	FormData    url.Values
+	FormErrors  map[string]string
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }

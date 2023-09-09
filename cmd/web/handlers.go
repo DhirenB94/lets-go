@@ -49,10 +49,10 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	// r.ParseForm() which adds any data in POST/PUT/PATCH request bodies to the r.PostForm map. 
+	// r.ParseForm() which adds any data in POST/PUT/PATCH request bodies to the r.PostForm map.
 	err := r.ParseForm()
 	if err != nil {
-        app.clientError(w, http.StatusBadRequest)
+		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
@@ -60,7 +60,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	validationErrors := make(map[string]string)
 
 	// Use the r.PostForm.Get() method to retrieve the relevant data fields from the r.PostForm map
-	title :=  r.PostForm.Get("title")
+	title := r.PostForm.Get("title")
 	content := r.PostForm.Get("content")
 	expires := r.PostForm.Get("expires")
 
@@ -68,24 +68,24 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if strings.TrimSpace(title) == "" {
 		validationErrors["title"] = "This field cannot be blank"
 	} else if utf8.RuneCountInString(title) > 100 {
-        validationErrors["title"] = "This field is too long (maximum is 100 characters)"
-    }
+		validationErrors["title"] = "This field is too long (maximum is 100 characters)"
+	}
 	if strings.TrimSpace(content) == "" {
 		validationErrors["content"] = "This field cannot be blank"
 	}
 	if strings.TrimSpace(expires) == "" {
-        validationErrors["expires"] = "This field cannot be blank"
-    } else if expires != "365" && expires != "7" && expires != "1" {
-        validationErrors["expires"] = "This field is invalid"
-    }
+		validationErrors["expires"] = "This field cannot be blank"
+	} else if expires != "365" && expires != "7" && expires != "1" {
+		validationErrors["expires"] = "This field is invalid"
+	}
 
 	// If there are any errors, re-display the create snippet page with previously submitted data and the validation errors
-    if len(validationErrors) > 0 {
-       app.render(w, r, "create.page.tmpl", &templateData{
-		CurrentYear: 0,
-		FormData: r.PostForm,
-		FormErrors: validationErrors,
-	})
+	if len(validationErrors) > 0 {
+		app.render(w, r, "create.page.tmpl", &templateData{
+			CurrentYear: 0,
+			FormData:    r.PostForm,
+			FormErrors:  validationErrors,
+		})
 		return
 	}
 
