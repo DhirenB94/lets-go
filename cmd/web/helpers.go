@@ -46,7 +46,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf := new(bytes.Buffer)
 
 	//add the default data
-	app.addDefaultData(td, r)
+	td = app.addDefaultData(td, r)
 
 	//execute the template set with the current year injected
 	err := ts.Execute(buf, td)
