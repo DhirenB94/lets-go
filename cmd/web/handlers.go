@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"strings"
-	"unicode/utf8"
 
 	//"html/template"
 	"net/http"
 	"strconv"
 
 	models "dhiren.brahmbhatt/snippetbox/pkg"
+	"dhiren.brahmbhatt/snippetbox/pkg/forms"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -56,40 +55,24 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Initialise a map to hold any validation errors
-	validationErrors := make(map[string]string)
-
-	// Use the r.PostForm.Get() method to retrieve the relevant data fields from the r.PostForm map
-	title := r.PostForm.Get("title")
-	content := r.PostForm.Get("content")
-	expires := r.PostForm.Get("expires")
+	//Initialise a new Form struct
+	form := forms.NewForm(r.PostForm)
 
 	//perform some basic validation, if validation fails add it to the validationErrors map
-	if strings.TrimSpace(title) == "" {
-		validationErrors["title"] = "This field cannot be blank"
-	} else if utf8.RuneCountInString(title) > 100 {
-		validationErrors["title"] = "This field is too long (maximum is 100 characters)"
-	}
-	if strings.TrimSpace(content) == "" {
-		validationErrors["content"] = "This field cannot be blank"
-	}
-	if strings.TrimSpace(expires) == "" {
-		validationErrors["expires"] = "This field cannot be blank"
-	} else if expires != "365" && expires != "7" && expires != "1" {
-		validationErrors["expires"] = "This field is invalid"
-	}
+	form.Required("title", "content", "expires")
+	form.MaxLength("title", 100)
+	form.PermittedValues("expires", "365", "7", "1")
 
 	// If there are any errors, re-display the create snippet page with previously submitted data and the validation errors
-	if len(validationErrors) > 0 {
+	if !form.Valid() {
 		app.render(w, r, "create.page.tmpl", &templateData{
-			CurrentYear: 0,
-			FormData:    r.PostForm,
-			FormErrors:  validationErrors,
+			Forms: form,
 		})
 		return
 	}
 
-	id, err := app.snippetsDb.Insert(title, content, expires)
+	//Insert the now validated form data, instead of the users unvalidated input into the form
+	id, err := app.snippetsDb.Insert(form.FormData.Get("title"), form.FormData.Get("content"), form.FormData.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -99,6 +82,9 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "create.page.tmpl", nil)
-	w.Write([]byte("create a new snippet"))
+	app.render(w, r, "create.page.tmpl", &templateData{
+		// Pass a new empty forms.Form object to the template.
+		Forms: forms.NewForm(nil),
+	})
+
 }

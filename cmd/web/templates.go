@@ -2,18 +2,17 @@ package main
 
 import (
 	"html/template"
-	"net/url"
 	"path/filepath"
 	"time"
 
 	models "dhiren.brahmbhatt/snippetbox/pkg"
+	"dhiren.brahmbhatt/snippetbox/pkg/forms"
 )
 
-// FormData will hold any previously submitted data, FormErrors will hold  the validation errors
+// Pass the new custom Form struct
 type templateData struct {
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
+	Forms       *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }
