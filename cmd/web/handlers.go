@@ -42,7 +42,14 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "show.page.tmpl", &templateData{Snippet: snippet})
+	//Retrieve the confirmation message if there is one and display it
+	//Pop.String() will retrieve but lso delete the key and the value from the session data (one time fetch)
+	flash := app.session.PopString(r, "flash")
+
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Flash: flash,
+		Snippet: snippet,
+	})
 
 	app.infoLog.Printf("Displaying a specific snippet with ID %d...", id)
 }
@@ -77,6 +84,11 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+	
+	//Add a flash confirmation message
+	//If there's no existing session for the current user (or their session has expired) then a new, empty, session will automatically be created by the session middleware.
+	app.session.Put(r, "flash", "Snippet successfully created")
+
 	//Redirect to show the relevant page
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
