@@ -31,6 +31,9 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 		td = &templateData{}
 	}
 	td.CurrentYear = time.Now().Year()
+
+	//Add the flash message to the template data if one exists, so we dont need to check for the flash message in the shoeSnippet handler
+	td.Flash = app.session.PopString(r, "flash")
 	return td
 }
 

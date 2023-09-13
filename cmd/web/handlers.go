@@ -42,12 +42,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Retrieve the confirmation message if there is one and display it
-	//Pop.String() will retrieve but lso delete the key and the value from the session data (one time fetch)
-	flash := app.session.PopString(r, "flash")
-
 	app.render(w, r, "show.page.tmpl", &templateData{
-		Flash: flash,
 		Snippet: snippet,
 	})
 
