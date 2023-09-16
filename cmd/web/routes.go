@@ -14,7 +14,7 @@ func (app *application) routes() http.Handler {
 	//create a standard middleware chain
 	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
-	//For the sessions to work, we need to wrap our application routes with the middleware provided by the Session.Enable() method. 
+	//For the sessions to work, we need to wrap our application routes with the middleware provided by the Session.Enable() method.
 	//This middleware loads and saves session data to and from the session cookie with every HTTP request and response as appropriate.
 	//We only need this middleware to act on our dynamic routes, the static route onlky serves static files and so does not need stateful behaviour
 	//create a dynamic middleware chain
@@ -37,7 +37,6 @@ func (app *application) routes() http.Handler {
 	mux.Get("/user/login", dynamicMiddleware.ThenFunc(app.loginUserForm))
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", dynamicMiddleware.ThenFunc(app.logoutUser))
-
 
 	return standardMiddleware.Then(mux)
 }

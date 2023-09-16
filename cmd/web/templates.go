@@ -12,7 +12,7 @@ import (
 // Pass the new custom Form struct
 type templateData struct {
 	CurrentYear int
-	Flash string
+	Flash       string
 	Forms       *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet

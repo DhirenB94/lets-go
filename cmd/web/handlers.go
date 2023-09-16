@@ -79,7 +79,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	
+
 	//Add a flash confirmation message
 	//If there's no existing session for the current user (or their session has expired) then a new, empty, session will automatically be created by the session middleware.
 	app.session.Put(r, "flash", "Snippet successfully created")
@@ -96,22 +96,22 @@ func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request
 
 }
 
-func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request)  {
+func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Display the signup user form")
 }
 
-func (app *application) signupUser(w http.ResponseWriter, r *http.Request)  {
+func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Create a new user")
 }
 
-func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request)  {
+func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Display the login user form")
 }
 
-func (app *application) loginUser(w http.ResponseWriter, r *http.Request)  {
+func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Login user")
 }
 
-func (app *application) logoutUser(w http.ResponseWriter, r *http.Request)  {
+func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Logout user")
 }
