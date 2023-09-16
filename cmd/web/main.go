@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
@@ -67,14 +68,22 @@ func main() {
 		templateCache: templateCache,
 	}
 
+	// Initialise a tls.Config struct
+	tlsConfig := tls.Config{
+		CurvePreferences:             []tls.CurveID{tls.X25519, tls.CurveP256},
+		PreferServerCipherSuites: true,
+	}
+
+
 	//Routes
 	mux := app.routes()
 
-	//Intialise a new Http server and set the address, handler and errorLog fields so that these are used instead of Go's default HTTP server settings
+	//Intialise a new Http server and set the address, handler, errorLog and TLS fields so that these are used instead of Go's default HTTP server settings
 	srv := http.Server{
 		Addr:     *addr,
 		Handler:  mux,
 		ErrorLog: errLog,
+		TLSConfig: &tlsConfig,
 	}
 
 	infoLog.Printf("Starting Server on %s", *addr)
