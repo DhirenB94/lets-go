@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+
+#Exclude TLS certificate and key files
+cert.pem
+key.pem
