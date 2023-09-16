@@ -97,6 +97,9 @@ func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "signup.page.tmpl", &templateData{
+		Forms: forms.NewForm(nil),
+	})
 	fmt.Fprintln(w, "Display the signup user form")
 }
 
