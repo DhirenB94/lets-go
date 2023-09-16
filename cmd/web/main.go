@@ -21,6 +21,7 @@ type application struct {
 	errorLog      *log.Logger
 	session       *sessions.Session
 	snippetsDb    *mysql.SnippetModel
+	userDB        *mysql.UserModel
 	templateCache map[string]*template.Template
 }
 
@@ -65,24 +66,24 @@ func main() {
 		errorLog:      errLog,
 		session:       session,
 		snippetsDb:    &mysql.SnippetModel{DB: db},
+		userDB:        &mysql.UserModel{DB: db},
 		templateCache: templateCache,
 	}
 
 	// Initialise a tls.Config struct
 	tlsConfig := tls.Config{
-		CurvePreferences:             []tls.CurveID{tls.X25519, tls.CurveP256},
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
 		PreferServerCipherSuites: true,
 	}
-
 
 	//Routes
 	mux := app.routes()
 
 	//Intialise a new Http server and set the address, handler, errorLog and TLS fields so that these are used instead of Go's default HTTP server settings
 	srv := http.Server{
-		Addr:     *addr,
-		Handler:  mux,
-		ErrorLog: errLog,
+		Addr:      *addr,
+		Handler:   mux,
+		ErrorLog:  errLog,
 		TLSConfig: &tlsConfig,
 		// Add Idle, Read and Write timeouts to the server.
 		IdleTimeout:  time.Minute,
