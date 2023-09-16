@@ -11,11 +11,12 @@ import (
 
 // Pass the new custom Form struct
 type templateData struct {
-	CurrentYear int
-	Flash       string
-	Forms       *forms.Form
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
+	AuthenticatedUser int
+	CurrentYear       int
+	Flash             string
+	Forms             *forms.Form
+	Snippet           *models.Snippet
+	Snippets          []*models.Snippet
 }
 
 // humanDate returns a formatted easily readable string of the date
