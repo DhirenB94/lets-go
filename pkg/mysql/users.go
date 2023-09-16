@@ -43,7 +43,30 @@ func (um *UserModel) Insert(name, email, password string) error {
 // Authenticate will verify whether a user exists with the provided email and password.
 // This will return the relevant user ID if they do.
 func (um *UserModel) Authenticate(email, password string) (int, error) {
-	return 0, nil
+	//Retrieve the id and hashed password for an emai.
+	//If the email does not exist, retrun ErrInvalidCredentials
+	var id int
+	var hashedPassword []byte
+	query := `SELECT id, hashed_password FROM users
+	WHERE email = ?`
+
+	row := um.DB.QueryRow(query, email)
+	err := row.Scan(&id, &hashedPassword)
+	if err == sql.ErrNoRows {
+		return 0, models.ErrInvalidCredentials
+	} else if err != nil {
+		return 0, err
+	}
+
+	//Check whether hashed password from the db is the same as the user entered password
+	//If they do not match return custom Err
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return 0, models.ErrInvalidCredentials
+	} else if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 // Get will fetch specific details for a user based on their ID
