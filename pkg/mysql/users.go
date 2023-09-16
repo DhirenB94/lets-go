@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"database/sql"
-	"fmt"
 	"strings"
 
 	models "dhiren.brahmbhatt/snippetbox/pkg"
@@ -33,7 +32,6 @@ func (um *UserModel) Insert(name, email, password string) error {
 	_, err = um.DB.Exec(query, name, email, string(hashedPassword))
 	if err != nil {
 		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-			fmt.Println("ERROR MESSAGE ------->>>>>>", mysqlErr.Message)
 			if mysqlErr.Number == 1062 && strings.Contains(mysqlErr.Message, "'users.users_uc_email") {
 				return models.ErrDuplicateEmail
 			}

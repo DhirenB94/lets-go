@@ -131,7 +131,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	if err == models.ErrDuplicateEmail {
 		form.FormErrors.Add("email", "email already exists")
 		app.render(w, r, "signup.page.tmpl", &templateData{Forms: form})
-        return
+		return
 	} else if err != nil {
 		app.serverError(w, err)
 		return
