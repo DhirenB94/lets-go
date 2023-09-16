@@ -84,6 +84,10 @@ func main() {
 		Handler:  mux,
 		ErrorLog: errLog,
 		TLSConfig: &tlsConfig,
+		// Add Idle, Read and Write timeouts to the server.
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	infoLog.Printf("Starting Server on %s", *addr)
