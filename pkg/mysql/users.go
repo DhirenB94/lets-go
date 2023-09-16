@@ -2,8 +2,13 @@ package mysql
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 
 	models "dhiren.brahmbhatt/snippetbox/pkg"
+	"github.com/go-sql-driver/mysql"
+
+	"golang.org/x/crypto/bcrypt" // New import
 )
 
 type UserModel struct {
@@ -12,7 +17,29 @@ type UserModel struct {
 
 // Insert method will add a new record to the users table.
 func (um *UserModel) Insert(name, email, password string) error {
-	return nil
+	// Create a bcrypt hash of the plain-text password.
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	if err != nil {
+		return err
+	}
+	query := `INSERT INTO users (name, email, hashed_password, created)
+    VALUES(?, ?, ?, UTC_TIMESTAMP())`
+
+	// Use the Exec() method to insert the user details and hashed password into the users table.
+	// If this returns an error, we try to type assert it to a *mysql.MySQLError object, so we can check if the error number is 1062 (ER_DUP_ENTRY)
+	// If it is, we also check whether or not the error relates to our users_uc_email key by checking the contents of the message string.
+	// If it does, we return an ErrDuplicateEmail error.
+	// Otherwise, we just return the original error (or nil if everything worked)
+	_, err = um.DB.Exec(query, name, email, string(hashedPassword))
+	if err != nil {
+		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+			fmt.Println("ERROR MESSAGE ------->>>>>>", mysqlErr.Message)
+			if mysqlErr.Number == 1062 && strings.Contains(mysqlErr.Message, "'users.users_uc_email") {
+				return models.ErrDuplicateEmail
+			}
+		}
+	}
+	return err
 }
 
 // Authenticate will verify whether a user exists with the provided email and password.

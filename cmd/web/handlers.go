@@ -116,7 +116,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	form.Required("name", "email", "password")
 	form.MinLength("password", 10)
 	form.MatchesPattern("email", forms.EmailRX)
-	
+
 	//if there are any errors, re-display the signup form
 	if !form.Valid() {
 		app.render(w, r, "signup.page.tmpl", &templateData{
@@ -125,8 +125,23 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Otherwise send a plcaeholder response for now
-	fmt.Fprintln(w, "Create a new user")
+	//Insert the new user record into the DB.
+	//If the email already exists, add an error messsage and redeisplay the form
+	err = app.userDB.Insert(form.FormData.Get("name"), form.FormData.Get("email"), form.FormData.Get("password"))
+	if err == models.ErrDuplicateEmail {
+		form.FormErrors.Add("email", "email already exists")
+		app.render(w, r, "signup.page.tmpl", &templateData{Forms: form})
+        return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	//Add a flash confirmation message
+	app.session.Put(r, "flash", "Signup successfull, please login")
+
+	//Redirect to the login page
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
