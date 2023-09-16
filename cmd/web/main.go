@@ -56,6 +56,7 @@ func main() {
 	//Initialise a new session manager, pass in the secret key
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true //Set the Secure flag on our session cookies
 
 	//Initialise a new instance of application contiaining the dependencies
 	app := &application{
@@ -78,8 +79,8 @@ func main() {
 
 	infoLog.Printf("Starting Server on %s", *addr)
 
-	//call the listen and serve method on our new htpp server
-	err = srv.ListenAndServe()
+	//call the listen and serve TLS method on our new htpp server
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	if err != nil {
 		errLog.Fatal(err)
 	}
