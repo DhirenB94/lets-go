@@ -70,6 +70,19 @@ func (um *UserModel) Authenticate(email, password string) (int, error) {
 }
 
 // Get will fetch specific details for a user based on their ID
-func (um *UserModel) Get(id int) (models.User, error) {
-	return models.User{}, nil
+func (um *UserModel) Get(id int) (*models.User, error) {
+	query := `SELECT id, name, email FROM users
+	WHERE id = ?`
+
+	user := &models.User{}
+
+	row := um.DB.QueryRow(query, id)
+	err := row.Scan(&user.ID, &user.Name, &user.Email)
+	if err == sql.ErrNoRows {
+		return nil, models.ErrNoRecord
+	} else if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

@@ -25,6 +25,10 @@ type application struct {
 	templateCache map[string]*template.Template
 }
 
+type contextKey string
+
+var contextKeyUser = contextKey("user")
+
 func main() {
 
 	//Command line Flags
