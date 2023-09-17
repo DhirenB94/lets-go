@@ -51,16 +51,15 @@ func (app *application) requireAuthenticatedUser(nextHandler http.Handler) http.
 	})
 }
 
-
-//noSurf middleware function which uses a customised CSRF cookie with some flags set
+// noSurf middleware function which uses a customised CSRF cookie with some flags set
 func noSurf(nextHandler http.Handler) http.Handler {
-		csrfHandler := nosurf.New(nextHandler)
+	csrfHandler := nosurf.New(nextHandler)
 
-		csrfHandler.SetBaseCookie(http.Cookie{
-			Path:     "/",
-			Secure:   true,
-			HttpOnly: true,
-			SameSite: 0,
-		})
+	csrfHandler.SetBaseCookie(http.Cookie{
+		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: 0,
+	})
 	return csrfHandler
 }
