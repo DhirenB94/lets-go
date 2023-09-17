@@ -25,6 +25,7 @@ type application struct {
 	templateCache map[string]*template.Template
 }
 
+// Define contextKey type and contextKeyUser variable so that we have a unique key that we can use to store and retrieve the user details from the request context
 type contextKey string
 
 var contextKeyUser = contextKey("user")
