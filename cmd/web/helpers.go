@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"runtime/debug"
 	"time"
+
+	"github.com/justinas/nosurf"
 )
 
 // serverError writes an error to the stack trace to the customLogger, then sends a generic 500 internal server error to the user
@@ -36,6 +38,8 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	td.Flash = app.session.PopString(r, "flash")
 	//Add the int value of the userID from the session everytime we render a template
 	td.AuthenticatedUser = app.autheticatedUser(r)
+	//Add the csrf token
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 

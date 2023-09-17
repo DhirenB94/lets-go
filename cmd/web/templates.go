@@ -12,6 +12,7 @@ import (
 // Pass the new custom Form struct
 type templateData struct {
 	AuthenticatedUser int
+	CSRFToken         string
 	CurrentYear       int
 	Flash             string
 	Forms             *forms.Form
