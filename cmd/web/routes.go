@@ -19,7 +19,7 @@ func (app *application) routes() http.Handler {
 	//We only need this middleware to act on our dynamic routes, the static route onlky serves static files and so does not need stateful behaviour
 	//use nosurf middleware on all our dynamic routes
 	//create a dynamic middleware chain
-	dynamicMiddleware := alice.New(app.session.Enable, noSurf)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate)
 
 	//Routes
 	//Uodate the routes using the dynamicmiddlewarechain
