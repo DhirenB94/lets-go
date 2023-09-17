@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/justinas/nosurf"
 )
 
 func secureHeaders(nextHandler http.Handler) http.Handler {
@@ -38,7 +40,7 @@ func (app *application) recoverPanic(nextHandler http.Handler) http.Handler {
 	})
 }
 
-func (app *application) requireAuthenticatedUser (nextHandler http.Handler)http.Handler {
+func (app *application) requireAuthenticatedUser(nextHandler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//If the user is not authenticated, redirect to login page and return to prevent subsequent handlers from being executed
 		if app.autheticatedUser(r) == 0 {
@@ -47,4 +49,18 @@ func (app *application) requireAuthenticatedUser (nextHandler http.Handler)http.
 		}
 		nextHandler.ServeHTTP(w, r)
 	})
+}
+
+
+//noSurf middleware function which uses a customised CSRF cookie with some flags set
+func noSurf(nextHandler http.Handler) http.Handler {
+		csrfHandler := nosurf.New(nextHandler)
+
+		csrfHandler.SetBaseCookie(http.Cookie{
+			Path:     "/",
+			Secure:   true,
+			HttpOnly: true,
+			SameSite: 0,
+		})
+	return csrfHandler
 }

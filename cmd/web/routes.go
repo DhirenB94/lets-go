@@ -17,8 +17,9 @@ func (app *application) routes() http.Handler {
 	//For the sessions to work, we need to wrap our application routes with the middleware provided by the Session.Enable() method.
 	//This middleware loads and saves session data to and from the session cookie with every HTTP request and response as appropriate.
 	//We only need this middleware to act on our dynamic routes, the static route onlky serves static files and so does not need stateful behaviour
+	//use nosurf middleware on all our dynamic routes
 	//create a dynamic middleware chain
-	dynamicMiddleware := alice.New(app.session.Enable)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf)
 
 	//Routes
 	//Uodate the routes using the dynamicmiddlewarechain
