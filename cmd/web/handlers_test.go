@@ -24,6 +24,7 @@ func TestPing(t *testing.T) {
 	// assert that the status code from the ping handler is 200
 	assert.Equal(t, http.StatusOK, result.StatusCode)
 	//assert that the response body from the ping handler is "OK"
+	defer result.Body.Close()
 	body, err := io.ReadAll(result.Body)
 	assert.NoError(t, err)
 	assert.Equal(t, "OK", string(body))
