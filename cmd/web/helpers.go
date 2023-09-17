@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	models "dhiren.brahmbhatt/snippetbox/pkg"
 	"github.com/justinas/nosurf"
 )
 
@@ -37,7 +38,7 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	//Add the flash message to the template data if one exists, so we dont need to check for the flash message in the shoeSnippet handler
 	td.Flash = app.session.PopString(r, "flash")
 	//Add the int value of the userID from the session everytime we render a template
-	td.AuthenticatedUser = app.autheticatedUser(r)
+	td.AuthenticatedUser = app.authenticatedUser(r)
 	//Add the csrf token
 	td.CSRFToken = nosurf.Token(r)
 	return td
@@ -68,7 +69,12 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf.WriteTo(w)
 }
 
-// authenticatedUser will return the ID of the current user from the session or 0 if the request is from an unauthenticated user
-func (app *application) autheticatedUser(r *http.Request) int {
-	return app.session.GetInt(r, "userID")
+// authenticatedUser will check for a models.user struct in the request context with the key contextKeyUser
+// If there is we know the user is auth and valid so return their deta
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
 }

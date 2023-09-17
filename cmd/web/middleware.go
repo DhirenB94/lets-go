@@ -45,7 +45,7 @@ func (app *application) recoverPanic(nextHandler http.Handler) http.Handler {
 func (app *application) requireAuthenticatedUser(nextHandler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//If the user is not authenticated, redirect to login page and return to prevent subsequent handlers from being executed
-		if app.autheticatedUser(r) == 0 {
+		if app.authenticatedUser(r) == nil {
 			http.Redirect(w, r, "/user/login", 302)
 			return
 		}
