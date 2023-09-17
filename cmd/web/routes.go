@@ -39,5 +39,8 @@ func (app *application) routes() http.Handler {
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", dynamicMiddleware.Append(app.requireAuthenticatedUser).ThenFunc(app.logoutUser))
 
+	//ping route for testing purposes
+	mux.Get("/ping", http.HandlerFunc(ping))
+
 	return standardMiddleware.Then(mux)
 }
