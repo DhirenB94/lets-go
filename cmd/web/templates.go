@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
-	models "dhiren.brahmbhatt/snippetbox/pkg"
+	models "dhiren.brahmbhatt/snippetbox/pkg/models"
 	"dhiren.brahmbhatt/snippetbox/pkg/forms"
 )
 

@@ -3,7 +3,7 @@ package mock
 import (
 	"time"
 
-	models "dhiren.brahmbhatt/snippetbox/pkg"
+	models "dhiren.brahmbhatt/snippetbox/pkg/models"
 )
 
 type MockSnippetModel struct{}

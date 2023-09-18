@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"strings"
 
-	models "dhiren.brahmbhatt/snippetbox/pkg"
+	models "dhiren.brahmbhatt/snippetbox/pkg/models"
 	"github.com/go-sql-driver/mysql"
 
 	"golang.org/x/crypto/bcrypt" // New import

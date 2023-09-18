@@ -7,7 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	models "dhiren.brahmbhatt/snippetbox/pkg"
+	models "dhiren.brahmbhatt/snippetbox/pkg/models"
 	"github.com/justinas/nosurf"
 )
 

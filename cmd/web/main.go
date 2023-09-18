@@ -10,8 +10,8 @@ import (
 	"os"
 	"time"
 
-	models "dhiren.brahmbhatt/snippetbox/pkg"
-	"dhiren.brahmbhatt/snippetbox/pkg/mysql"
+	models "dhiren.brahmbhatt/snippetbox/pkg/models"
+	"dhiren.brahmbhatt/snippetbox/pkg/models/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golangcollege/sessions"
 )
