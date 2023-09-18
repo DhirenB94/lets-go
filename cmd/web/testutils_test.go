@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httptest"
 	"testing"
 
@@ -18,6 +19,19 @@ type testServer struct {
 // newTestServer helper will initialise a new instnace of the custom testServer
 func newTestServer(t *testing.T, h http.Handler) *testServer {
 	ts := httptest.NewTLSServer(h)
+
+	//initialise a new cookies jar and add it to the client
+	jar, err := cookiejar.New(nil)
+	assert.NoError(t, err)
+	ts.Client().Jar = jar
+
+	//disable reditrect following for the client.
+	//this func will be called after a 3xx response is recieved by the client,
+	//returning the http.ErrUseLastResponse error forces it to immediately return the received response.
+	ts.Client().CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
 	return &testServer{server: ts}
 }
 
