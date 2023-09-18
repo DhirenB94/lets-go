@@ -1,11 +1,14 @@
 package main
 
 import (
+	"html"
 	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
+	"net/url"
+	"regexp"
 	"testing"
 	"time"
 
@@ -51,6 +54,18 @@ func (cs *testServer) get(t *testing.T, url string) (int, http.Header, []byte) {
 	return response.StatusCode, response.Header, body
 }
 
+func (cs *testServer) postForm(t *testing.T, url string, formData url.Values) (int, http.Header, []byte) {
+	response, err := cs.server.Client().PostForm(cs.server.URL+url, formData)
+	assert.NoError(t, err)
+
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	assert.NoError(t, err)
+
+	return response.StatusCode, response.Header, body
+}
+
 // newTestApplication helper returns an instance of our application struct containing mocked dependencies.
 func newTestApplication(t *testing.T) *application {
 
@@ -73,4 +88,18 @@ func newTestApplication(t *testing.T) *application {
 		userDB:        &mock.MockUserModel{},
 		templateCache: templateCache,
 	}
+}
+
+// Define a regular expression which captures the CSRF token value from the HTML for our user signup page.
+var csrfTokenRX = regexp.MustCompile(`<input type='hidden' name='csrf_token' value='([^']+)'>`)
+
+func extractCSRFToken(t *testing.T, body []byte) string {
+	// Use the FindSubmatch method to extract the token from the HTML body.
+	// Note that this returns an array with the entire matched pattern in the 1st position
+	// and the values of any captured data in the subsequent positions.
+	matches := csrfTokenRX.FindSubmatch(body)
+	if len(matches) < 2 {
+		t.Fatal("no csrf token found in body")
+	}
+	return html.UnescapeString(string(matches[1]))
 }
