@@ -38,7 +38,7 @@ func newTestServer(t *testing.T, h http.Handler) *testServer {
 	return &testServer{server: ts}
 }
 
-// get method on our custom testServer type will make a GET /ping request on the test server and return the statusCode, headers and body
+// get method on our custom testServer type will make a GET request on the URL of the server plus desired URL and return the statusCode, headers and body
 func (cs *testServer) get(t *testing.T, url string) (int, http.Header, []byte) {
 	response, err := cs.server.Client().Get(cs.server.URL + url)
 	assert.NoError(t, err)
