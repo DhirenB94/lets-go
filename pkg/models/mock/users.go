@@ -8,7 +8,7 @@ import (
 
 type MockUserModel struct{}
 
-var mockUser = models.User{
+var mockUser = &models.User{
 	ID:      1,
 	Name:    "mock name",
 	Email:   "mock@email.com",
@@ -16,13 +16,28 @@ var mockUser = models.User{
 }
 
 func (mu *MockUserModel) Insert(name, email, password string) error {
-	return nil
+	switch email {
+	case "dupe@example.com":
+		return models.ErrDuplicateEmail
+	default:
+		return nil
+	}
 }
 
 func (mu *MockUserModel) Authenticate(email, password string) (int, error) {
-	return 0, nil
+	switch email {
+	case "mock@email.com":
+		return 1, nil
+	default:
+		return 0, models.ErrInvalidCredentials
+	}
 }
 
 func (mu *MockUserModel) Get(id int) (*models.User, error) {
-	return &mockUser, nil
+	switch id {
+	case 1:
+		return mockUser, nil
+	default:
+		return nil, models.ErrNoRecord
+	}
 }

@@ -17,13 +17,18 @@ var mockSnippet = &models.Snippet{
 }
 
 func (m *MockSnippetModel) Get(id int) (*models.Snippet, error) {
-	return mockSnippet, nil
+	switch id {
+	case 1:
+		return mockSnippet, nil
+	default:
+		return nil, models.ErrNoRecord
+	}
 }
 
 func (m *MockSnippetModel) Insert(title, content, expires string) (int, error) {
-	return 0, nil
+	return 2, nil
 }
 
 func (m *MockSnippetModel) Latest() ([]*models.Snippet, error) {
-	return nil, nil
+	return []*models.Snippet{mockSnippet}, nil
 }
