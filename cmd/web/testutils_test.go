@@ -7,7 +7,10 @@ import (
 	"net/http/cookiejar"
 	"net/http/httptest"
 	"testing"
+	"time"
 
+	"dhiren.brahmbhatt/snippetbox/pkg/models/mock"
+	"github.com/golangcollege/sessions"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,8 +53,24 @@ func (cs *testServer) get(t *testing.T, url string) (int, http.Header, []byte) {
 
 // newTestApplication helper returns an instance of our application struct containing mocked dependencies.
 func newTestApplication(t *testing.T) *application {
+
+	// Create a session manager instance, with the same settings as production.
+	session := sessions.New([]byte("3dSm5MnygFHh7XidAtbskXrjbwfoJcbJ"))
+	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+
+	// Create an instance of the template cache.
+	templateCache, err := newTemplateCache("./../../ui/html/")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	return &application{
-		errorLog: log.New(io.Discard, "", 0),
-		infoLog:  log.New(io.Discard, "", 0),
+		errorLog:      log.New(io.Discard, "", 0),
+		infoLog:       log.New(io.Discard, "", 0),
+		session:       session,
+		snippetsDb:    &mock.MockSnippetModel{},
+		userDB:        &mock.MockUserModel{},
+		templateCache: templateCache,
 	}
 }
