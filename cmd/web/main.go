@@ -10,18 +10,31 @@ import (
 	"os"
 	"time"
 
+	models "dhiren.brahmbhatt/snippetbox/pkg"
 	"dhiren.brahmbhatt/snippetbox/pkg/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golangcollege/sessions"
 )
+
+type snippetDB interface {
+	Insert(title, content, expires string) (int, error)
+	Get(id int) (*models.Snippet, error)
+	Latest() ([]*models.Snippet, error)
+}
+
+type userDB interface {
+	Insert(name, email, password string) error
+	Authenticate(email, password string) (int, error)
+	Get(id int) (*models.User, error)
+}
 
 // Define struct to hold application-wide dependencies
 type application struct {
 	infoLog       *log.Logger
 	errorLog      *log.Logger
 	session       *sessions.Session
-	snippetsDb    *mysql.SnippetModel
-	userDB        *mysql.UserModel
+	snippetsDb    snippetDB
+	userDB        userDB
 	templateCache map[string]*template.Template
 }
 
